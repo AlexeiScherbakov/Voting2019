@@ -1,0 +1,58 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29201.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{09AE32A4-8D33-4BF7-BB52-BB3DF766F73F}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VoteAnalyzer", "src\VoteAnalyzer\VoteAnalyzer.csproj", "{2D1D68D7-9FA8-4456-8F09-1819FD9C67C3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Voting2019.Core", "src\Voting2019.Core\Voting2019.Core.csproj", "{5AADC1AC-9706-4AD9-B02B-B4D197D26BF5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Voting2019.Visualization", "src\Voting2019.Visualization\Voting2019.Visualization.csproj", "{1245B34A-137B-4AB8-82F9-081129EBADC0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EC0BD873-FC26-46CB-9894-DA4E4E9A264C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{19254A90-6241-4F7C-AA6A-9E885F074A07}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{374FE495-672B-49B7-BF4E-CB5F6350C8E6}"
+	ProjectSection(SolutionItems) = preProject
+		data\ballots_decrypted_2019-09-08.csv = data\ballots_decrypted_2019-09-08.csv
+		data\ballots_encrypted_2019-09-08T20_30_00.csv = data\ballots_encrypted_2019-09-08T20_30_00.csv
+		data\keys.txt = data\keys.txt
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2D1D68D7-9FA8-4456-8F09-1819FD9C67C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D1D68D7-9FA8-4456-8F09-1819FD9C67C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D1D68D7-9FA8-4456-8F09-1819FD9C67C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D1D68D7-9FA8-4456-8F09-1819FD9C67C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AADC1AC-9706-4AD9-B02B-B4D197D26BF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AADC1AC-9706-4AD9-B02B-B4D197D26BF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AADC1AC-9706-4AD9-B02B-B4D197D26BF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AADC1AC-9706-4AD9-B02B-B4D197D26BF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1245B34A-137B-4AB8-82F9-081129EBADC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1245B34A-137B-4AB8-82F9-081129EBADC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1245B34A-137B-4AB8-82F9-081129EBADC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1245B34A-137B-4AB8-82F9-081129EBADC0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2D1D68D7-9FA8-4456-8F09-1819FD9C67C3} = {EC0BD873-FC26-46CB-9894-DA4E4E9A264C}
+		{5AADC1AC-9706-4AD9-B02B-B4D197D26BF5} = {EC0BD873-FC26-46CB-9894-DA4E4E9A264C}
+		{1245B34A-137B-4AB8-82F9-081129EBADC0} = {EC0BD873-FC26-46CB-9894-DA4E4E9A264C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {638CD39B-163B-4E38-ABE0-E8D4FB528337}
+	EndGlobalSection
+EndGlobal

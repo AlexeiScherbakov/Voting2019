@@ -1,0 +1,48 @@
+﻿<Window x:Class="VoteAnalyzer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:oxy="http://oxyplot.org/wpf"
+		xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+		mc:Ignorable="d"
+        Title="Moscow Voting 2019" Height="600" Width="1000">
+	<DockPanel>
+		<TextBlock DockPanel.Dock="Bottom" x:Name="txtFooter"/>
+		<TabControl TabStripPlacement="Left">
+			<TabItem Header="Stats">
+				<xctk:PropertyGrid x:Name="stats" IsReadOnly="True"/>
+			</TabItem>
+			<TabItem Header="Block average calculation time">
+				<oxy:PlotView x:Name="plotBlockTime"/>
+			</TabItem>
+			<TabItem Header="Votes distribution/block">
+				<oxy:PlotView x:Name="plotTotalVotes"/>
+			</TabItem>
+
+			<TabItem Header="Total cumulative voted/time">
+				<oxy:PlotView x:Name="plotTotalVotesByTime"/>
+			</TabItem>
+
+			<TabItem Header="District 1/blocks">
+				<oxy:PlotView x:Name="plotDistrict1"/>
+			</TabItem>
+			<TabItem Header="District 1 cumulative/time">
+				<oxy:PlotView x:Name="plotDistrict1Cumulative"/>
+			</TabItem>
+			<TabItem Header="District 10/blocks">
+				<oxy:PlotView x:Name="plotDistrict10"/>
+			</TabItem>
+			<TabItem Header="District 10 cumulative/time">
+				<oxy:PlotView x:Name="plotDistrict10Cumulative"/>
+			</TabItem>
+			<TabItem Header="District 30/blocks">
+				<oxy:PlotView x:Name="plotDistrict30"/>
+			</TabItem>
+			<TabItem Header="District 30 cumulative/time">
+				<oxy:PlotView x:Name="plotDistrict30Cumulative"/>
+			</TabItem>
+		</TabControl>
+
+	</DockPanel>
+</Window>

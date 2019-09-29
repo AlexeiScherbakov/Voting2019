@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+		<Authors>Alexei Shcherbakov</Authors>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/AlexeiScherbakov/Voting2019.git</RepositoryUrl>
+		<Copyright>Alexei Shcherbakov © 2019</Copyright>
+		<Description>Moscow E-Voting data library</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TinyCsvParser" Version="2.5.2" />
+  </ItemGroup>
+
+</Project>

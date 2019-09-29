@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+		<RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+		<PublishSingleFile>true</PublishSingleFile>
+		<PublishTrimmed>true</PublishTrimmed>
+		<Authors>Alexei Shcherbakov</Authors>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/AlexeiScherbakov/Voting2019.git</RepositoryUrl>
+		<Copyright>Alexei Shcherbakov © 2019</Copyright>
+		<Description>Moscow E-Voting analyzer</Description>
+  </PropertyGroup>
+	
+	  <ItemGroup>
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="3.6.0" />
+    <PackageReference Include="OxyPlot.Wpf" Version="2.0.0-unstable1059" />
+  </ItemGroup>
+		
+  <ItemGroup>
+    <None Include="..\..\data\ballots_decrypted_2019-09-08.csv" Link="ballots_decrypted_2019-09-08.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Voting2019.Core\Voting2019.Core.csproj" />
+    <ProjectReference Include="..\Voting2019.Visualization\Voting2019.Visualization.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+		<Authors>Alexei Shcherbakov</Authors>
+		<Copyright>Alexei Shcherbakov © 2019</Copyright>
+		<Description>Moscow E-Voting visualization library</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OxyPlot.Core" Version="2.0.0-unstable1059" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Voting2019.Core\Voting2019.Core.csproj" />
+  </ItemGroup>
+
+</Project>
