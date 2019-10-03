@@ -43,7 +43,7 @@ namespace Voting2019.Visualization
 			}
 		}
 
-		public static void LoadBlockTimesToPlot(PlotModel plotModel, VotingResults votingResults,LineSeries averageBlockTimeSeries,LineSeries blockStartTimeSeries,string averageBlockTimeAxisKey,string blockStartAxisTimeKey)
+		public static TimeSpan LoadBlockTimesToSeries(VotingResults votingResults,LineSeries averageBlockTimeSeries,LineSeries blockStartTimeSeries)
 		{
 			var blocks = votingResults.Votes.Select(x => new BlockStartTime(x.BlockNumber, x.Time))
 				.Distinct()
@@ -59,24 +59,20 @@ namespace Voting2019.Visualization
 			{
 				ref BlockStartTime currentBlock = ref blocks[i];
 
-				if (blockStartTimeSeries != null)
-				{
-					blockStartTimeSeries.Points.Add(new DataPoint(currentBlock.BlockNumber, TimeSpanAxis.ToDouble(currentBlock.Time)));
-				}
 
 				var blocksTime = currentBlock.Time - lastBlockStartTime;
 				var numberOfBlocks = currentBlock.BlockNumber - lastBlockNumber;
 
 				var averageBlockTime = blocksTime / numberOfBlocks;
 
-				if (averageBlockTimeSeries != null)
+				for (int point = lastBlockNumber; point < currentBlock.BlockNumber; point++)
 				{
-					for (int point = lastBlockNumber; point < currentBlock.BlockNumber; point++)
-					{
+					if (blockStartTimeSeries != null)
+						blockStartTimeSeries.Points.Add(new DataPoint(point, TimeSpanAxis.ToDouble(currentBlock.Time)));
+					if (averageBlockTimeSeries != null)
 						averageBlockTimeSeries.Points.Add(new DataPoint(point, TimeSpanAxis.ToDouble(averageBlockTime)));
-					}
 				}
-				
+
 				lastBlockStartTime = currentBlock.Time;
 				lastBlockNumber = currentBlock.BlockNumber;
 
@@ -84,13 +80,9 @@ namespace Voting2019.Visualization
 				{
 					maxBlockTime = averageBlockTime;
 				}
-				if (averageBlockTimeAxisKey != null)
-				{
-					var yAxis = plotModel.Axes.Where(x => x.Key == averageBlockTimeAxisKey).Single();
-					yAxis.Maximum = yAxis.AbsoluteMaximum = TimeSpanAxis.ToDouble(maxBlockTime);
-				}
-				
 			}
+
+			return maxBlockTime;
 		}
 
 	}

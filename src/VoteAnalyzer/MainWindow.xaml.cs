@@ -14,6 +14,7 @@ namespace VoteAnalyzer
 	{
 
 		private readonly BlockTimePlotModelHelper _blockTimePlotModelHelper = new BlockTimePlotModelHelper();
+		private readonly BlockTimePlotModelHelper _blockStartTimeModelHelper = new BlockTimePlotModelHelper();
 		private readonly TotalVotesByBlockDistribution _totalVotes = new TotalVotesByBlockDistribution();
 		private readonly VoteByTimeCandidateDistributionModelHelper _plotModelHelperDistrict1, _plotModelHelperDistrict10, _plotModelHelperDistrict30;
 		private readonly TotalCumulativeVotedByTime _plotTotalVotesByTime = new TotalCumulativeVotedByTime();
@@ -33,6 +34,7 @@ namespace VoteAnalyzer
 			_plotTotalVotesByTimeDistrict30 = new TotalCumulativeVotedByTime();
 
 			this.plotBlockTime.Model = _blockTimePlotModelHelper.PlotModel;
+			this.plotBlockStartTime.Model = _blockStartTimeModelHelper.PlotModel;
 			this.plotTotalVotes.Model = _totalVotes.PlotModel;
 			this.plotTotalVotesByTime.Model = _plotTotalVotesByTime.PlotModel;
 
@@ -53,13 +55,14 @@ namespace VoteAnalyzer
 			var votingResults = reader.ReadFromFile("ballots_decrypted_2019-09-08.csv");
 
 			// анализ времен вычисления блоков по блокчейну
-			_blockTimePlotModelHelper.UpdateBlockTime(votingResults);
+			_blockTimePlotModelHelper.ShowBlockTime(votingResults);
+			_blockStartTimeModelHelper.ShowBlockStartTime(votingResults);
 
 			// распределение всех голосов
 			_totalVotes.Show(votingResults);
 
 			_plotTotalVotesByTime.Show(votingResults);
-
+			
 			var districts = votingResults.Votes.Select(x => x.DistrictNumber).Distinct().ToArray();
 			// 1 район
 			_plotModelHelperDistrict1.ShowByBlockDistributionMultiAxis(votingResults, x => x.DistrictNumber == 1);

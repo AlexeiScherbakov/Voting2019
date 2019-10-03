@@ -39,35 +39,56 @@ namespace Voting2019.Visualization
 			get { return _plotModel; }
 		}
 
+		private LineSeries PrepareSeries()
+		{
+			LineSeries series = null;
+			if (_plotModel.Series.Count == 1)
+			{
+				series = (LineSeries) _plotModel.Series[0];
+				series.Points.Clear();
+			}
+			else
+			{
+				_plotModel.Series.Clear();
+				series = new LineSeries()
+				{
+					CanTrackerInterpolatePoints = false
+				};
+				_plotModel.Series.Add(series);
+			}
+			return series;
+		}
 
-		public void UpdateBlockTime(VotingResults votingResults)
+		public void ShowBlockTime(VotingResults votingResults)
 		{
 			lock (_plotModel.SyncRoot)
 			{
 				var xAxis=_plotModel.Axes.Where(x => x.Key == "x_axis").Single();
 				xAxis.SetMinMaxBlocksToXAxis(votingResults);
 
-				LineSeries series = null;
-				if (_plotModel.Series.Count == 1)
-				{
-					series = (LineSeries) _plotModel.Series[0];
-					series.Points.Clear();
-				}
-				else
-				{
-					_plotModel.Series.Clear();
-					series = new LineSeries()
-					{
-						CanTrackerInterpolatePoints = false
-					};
-					_plotModel.Series.Add(series);
-				}
+				var series = PrepareSeries();
 
-				BlockTimeVisualHelper.LoadBlockTimesToPlot(_plotModel, votingResults, series, null, "y_axis", null);
+				var maxTime=BlockTimeVisualHelper.LoadBlockTimesToSeries( votingResults, series, null);
+				var yAxis = _plotModel.Axes.Where(x => x.Key == "y_axis").Single();
+				yAxis.SetAxisMax(TimeSpanAxis.ToDouble(maxTime));
 			}
 			_plotModel.InvalidatePlot(true);
 		}
 
-		
+		public void ShowBlockStartTime(VotingResults votingResults)
+		{
+			lock (_plotModel.SyncRoot)
+			{
+				var xAxis = _plotModel.Axes.Where(x => x.Key == "x_axis").Single();
+				xAxis.SetMinMaxBlocksToXAxis(votingResults);
+
+				var series = PrepareSeries();
+
+				BlockTimeVisualHelper.LoadBlockTimesToSeries(votingResults, null, series);
+				var yAxis = _plotModel.Axes.Where(x => x.Key == "y_axis").Single();
+				yAxis.SetAxisMax(TimeSpanAxis.ToDouble(votingResults.Votes.Select(x => x.Time).Max()));
+			}
+			_plotModel.InvalidatePlot(true);
+		}
 	}
 }

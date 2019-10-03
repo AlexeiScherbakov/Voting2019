@@ -16,6 +16,9 @@
 			<TabItem Header="Block average calculation time">
 				<oxy:PlotView x:Name="plotBlockTime"/>
 			</TabItem>
+			<TabItem Header="Block Time / time">
+				<oxy:PlotView x:Name="plotBlockStartTime"/>
+			</TabItem>
 			<TabItem Header="Votes distribution/block">
 				<oxy:PlotView x:Name="plotTotalVotes"/>
 			</TabItem>
