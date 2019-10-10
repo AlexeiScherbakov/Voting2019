@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
 		<Authors>Alexei Shcherbakov</Authors>
 		<Copyright>Alexei Shcherbakov © 2019</Copyright>
 		<Description>Moscow E-Voting visualization library</Description>

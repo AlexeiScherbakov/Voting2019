@@ -45,6 +45,15 @@
 			<TabItem Header="District 30 cumulative/time">
 				<oxy:PlotView x:Name="plotDistrict30Cumulative"/>
 			</TabItem>
+			<TabItem Header="Datasets validator">
+				<xctk:BusyIndicator x:Name="busy">
+					<DockPanel>
+						<Button Content="Validate datasets (singlethreaded)" DockPanel.Dock="Top" Click="ValidateSeqButtonClick"/>
+						<Button Content="Validate datasets (multithreaded)" DockPanel.Dock="Top" Click="ValidateParallelButtonClick"/>
+						<Grid/>
+					</DockPanel>
+				</xctk:BusyIndicator>
+			</TabItem>
 		</TabControl>
 
 	</DockPanel>

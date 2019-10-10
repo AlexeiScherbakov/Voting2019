@@ -1,6 +1,5 @@
 using System;
 using System.Text;
-
 using TinyCsvParser;
 using TinyCsvParser.Mapping;
 
@@ -8,12 +7,12 @@ namespace Voting2019.Core
 {
 	public sealed class UnencryptedVoteFileReader
 	{
-		private readonly CsvParser<UnencrypteedVoteRecord> _csvParser;
+		private readonly CsvParser<UnencryptedVoteRecord> _csvParser;
 
 		public UnencryptedVoteFileReader()
 		{
 			var csvParserOptions = new CsvParserOptions(true, ',');
-			_csvParser = new CsvParser<UnencrypteedVoteRecord>(csvParserOptions, new UnencryptedVoteRecordMap());
+			_csvParser = new CsvParser<UnencryptedVoteRecord>(csvParserOptions, new UnencryptedVoteRecordMap());
 		}
 
 		public VotingResults ReadFromFile(string fileName)
@@ -43,7 +42,7 @@ namespace Voting2019.Core
 			return ret;
 		}
 
-		private sealed class UnencrypteedVoteRecord
+		private sealed class UnencryptedVoteRecord
 		{
 			public int Number { get; set; }
 			public int District { get; set; }
@@ -56,7 +55,7 @@ namespace Voting2019.Core
 		}
 
 		private sealed class UnencryptedVoteRecordMap
-			: CsvMapping<UnencrypteedVoteRecord>
+			: CsvMapping<UnencryptedVoteRecord>
 		{
 			public UnencryptedVoteRecordMap()
 			{

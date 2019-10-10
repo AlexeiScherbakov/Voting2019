@@ -23,6 +23,9 @@
     <None Include="..\..\data\ballots_decrypted_2019-09-08.csv" Link="ballots_decrypted_2019-09-08.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="..\..\data\ballots_encrypted_2019-09-08T20_30_00.csv" Link="ballots_encrypted_2019-09-08T20_30_00.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
