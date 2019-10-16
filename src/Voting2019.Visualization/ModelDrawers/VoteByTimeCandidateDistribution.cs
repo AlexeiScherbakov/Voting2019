@@ -6,14 +6,14 @@ using Voting2019.Core;
 
 namespace Voting2019.Visualization
 {
-	public class VoteByTimeCandidateDistributionModelHelper
+	public class VoteByBlockCandidateDistributionModelHelper
 		: IPlotModelDrawer
 	{
 		private readonly PlotModel _plotModel;
 		private readonly LinearAxis _xAxis;
 
 
-		public VoteByTimeCandidateDistributionModelHelper()
+		public VoteByBlockCandidateDistributionModelHelper()
 		{
 			_plotModel = new PlotModel();
 			_xAxis = new LinearAxis()
@@ -43,6 +43,16 @@ namespace Voting2019.Visualization
 			var visualData = VisualData.CreateBlockBasedVoteVisualData(votingResults, filter);
 
 			visualData.LoadToPlotModelMultiAxis(_plotModel);
+		}
+
+		public string GetTimeAxisKey()
+		{
+			return null;
+		}
+
+		public string GetBlockNumberAxisKey()
+		{
+			return "x_axis";
 		}
 	}
 }

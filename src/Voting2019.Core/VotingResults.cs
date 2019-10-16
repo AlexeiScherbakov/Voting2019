@@ -1,44 +1,29 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Voting2019.Core
 {
 	public sealed class VotingResults
 	{
-		private readonly Dictionary<long, Candidate> _candidates = new Dictionary<long, Candidate>();
+		private readonly Dictionary<long, Candidate> _candidates;
+		private readonly Vote[] _votes;
+		private readonly VotingStatistics _votingStatistics;
+		private readonly MinMaxInterval<int> _blockNumbers;
+		private readonly MinMaxInterval<TimeSpan> _times;
 
-		private readonly List<Vote> _votes = new List<Vote>();
+		private List<AnomalyZoneDefinition> _anomalyZones = new List<AnomalyZoneDefinition>();
 
-		private VotingStatistics _statistics = new VotingStatistics();
-
-		private MinMaxInterval<int> _blockNumbers;
-
-		private MinMaxInterval<TimeSpan> _times;
-
-		public VotingResults()
+		internal VotingResults(Dictionary<long,Candidate> candidates,IList<Vote> votes,VotingStatistics votingStatistics, MinMaxInterval<int> blockNumbers, MinMaxInterval<TimeSpan> times)
 		{
-
+			_candidates = candidates;
+			_votes = votes.ToArray();
+			_votingStatistics = votingStatistics;
+			_blockNumbers = blockNumbers;
+			_times = times;
 		}
 
-		public void AddVote(long district, long candidateId, string candidateName, Vote vote)
-		{
-			_blockNumbers.UpdateInterval(vote.BlockNumber);
-			_times.UpdateInterval(vote.Time);
-
-			if (!_candidates.TryGetValue(candidateId, out Candidate candidate))
-			{
-				candidate = new Candidate(candidateId, district, candidateName);
-				_candidates.Add(candidateId, candidate);
-			}
-			else
-			{
-				if (candidate.District != district)
-				{
-					throw new InvalidOperationException();
-				}
-			}
-			_votes.Add(vote);
-		}
+		
 
 
 		public IReadOnlyDictionary<long, Candidate> Candidates
@@ -51,17 +36,17 @@ namespace Voting2019.Core
 			get { return _votes; }
 		}
 
-		public VotingStatistics Statistics
+		public IReadOnlyList<AnomalyZoneDefinition> Anomalies
 		{
-			get { return _statistics; }
+			get { return _anomalyZones; }
 		}
 
-		public void CalculateBaseStatistics()
+		public VotingStatistics Statistics
 		{
-			_statistics.TotalVotes = _votes.Count;
-			_statistics.TotalBlocks = MaxBlockNumber - MinBlockNumber + 1;
-			_statistics.TotalTime = EndTime - StartTime;
+			get { return _votingStatistics; }
 		}
+
+
 
 		public int MinBlockNumber
 		{
@@ -81,6 +66,61 @@ namespace Voting2019.Core
 		public TimeSpan EndTime
 		{
 			get { return _times.Max; }
+		}
+
+		public int GetBlockNumberNearestToTime(TimeSpan time)
+		{
+			// мне лень оптимизировать этот код
+			if (time <= _votes[0].Time)
+			{
+				return _votes[0].BlockNumber;
+			}
+			if (time >= _votes[_votes.Length - 1].Time)
+			{
+				return _votes[_votes.Length - 1].BlockNumber;
+			}
+
+			for (int i = 0; i < _votes.Length -2; i++)
+			{
+				TimeSpan startTime = _votes[i].Time;
+				TimeSpan endTime = _votes[i + 1].Time;
+				if ((time > startTime) && (time < endTime))
+				{
+					var nearestTime = time.MapToNearestTime(startTime, endTime);
+					return (nearestTime == startTime) ? _votes[i].BlockNumber : _votes[i + 1].BlockNumber;
+				}
+			}
+			throw new InvalidOperationException();
+		}
+
+		public TimeSpan GetKnownBlockWriteTime(int blockNumber)
+		{
+			if (blockNumber <= MinBlockNumber)
+			{
+				return StartTime;
+			}
+			if (blockNumber >= MaxBlockNumber)
+			{
+				return EndTime;
+			}
+			for (int i=0;i < _votes.Length - 2; i++)
+			{
+				if (_votes[i+1].BlockNumber == blockNumber)
+				{
+					return _votes[i+1].Time;
+				}
+				if ((blockNumber > _votes[i].BlockNumber) && (blockNumber < _votes[i + 1].BlockNumber))
+				{
+					return _votes[i].Time;
+				}
+			}
+			throw new InvalidOperationException();
+		}
+
+
+		public void DefineAnomalyZoneByBlocks(string name,int startBlock,int endBlock)
+		{
+			_anomalyZones.Add(new AnomalyZoneDefinition(name, startBlock, endBlock, GetKnownBlockWriteTime(startBlock), GetKnownBlockWriteTime(endBlock)));
 		}
 	}
 }

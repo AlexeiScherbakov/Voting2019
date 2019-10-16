@@ -23,28 +23,47 @@ namespace VoteAnalyzer
 		private readonly BlockTimePlotModelHelper _blockTimePlotModelHelper = new BlockTimePlotModelHelper();
 		private readonly BlockTimePlotModelHelper _blockStartTimeModelHelper = new BlockTimePlotModelHelper();
 		private readonly TotalVotesByBlockDistribution _totalVotes = new TotalVotesByBlockDistribution();
-		private readonly VoteByTimeCandidateDistributionModelHelper _plotModelHelperDistrict1, _plotModelHelperDistrict10, _plotModelHelperDistrict30;
-		private readonly TotalCumulativeVotedByTime _plotTotalVotesByTime = new TotalCumulativeVotedByTime();
+		private readonly VoteByBlockCandidateDistributionModelHelper _plotModelHelperDistrict1, _plotModelHelperDistrict10, _plotModelHelperDistrict30;
+		private readonly TotalCumulativeVotedByTime _plotTotalCumulativeVotesByTime = new TotalCumulativeVotedByTime();
+		private readonly TotalCumulativeVotedByTime _totalCumulativeVotes30 = new TotalCumulativeVotedByTime();
 		private readonly TotalCumulativeVotedByTime _plotTotalVotesByTimeDistrict1, _plotTotalVotesByTimeDistrict10, _plotTotalVotesByTimeDistrict30;
+		private readonly StatisticsPlotModelHelper _statistics30PlotModelHelper = new StatisticsPlotModelHelper();
 
 		private VotingResults _votingResults;
+
+		private readonly List<IPlotModelDrawer> _plotModelDrawers = new List<IPlotModelDrawer>();
 
 		public MainWindow()
 		{
 			InitializeComponent();
-
-			_plotModelHelperDistrict1 = new VoteByTimeCandidateDistributionModelHelper();
-			_plotModelHelperDistrict10 = new VoteByTimeCandidateDistributionModelHelper();
-			_plotModelHelperDistrict30 = new VoteByTimeCandidateDistributionModelHelper();
+			_plotModelHelperDistrict1 = new VoteByBlockCandidateDistributionModelHelper();
+			_plotModelHelperDistrict10 = new VoteByBlockCandidateDistributionModelHelper();
+			_plotModelHelperDistrict30 = new VoteByBlockCandidateDistributionModelHelper();
 
 			_plotTotalVotesByTimeDistrict1 = new TotalCumulativeVotedByTime();
 			_plotTotalVotesByTimeDistrict10 = new TotalCumulativeVotedByTime();
 			_plotTotalVotesByTimeDistrict30 = new TotalCumulativeVotedByTime();
 
+			_blockTimePlotModelHelper.SetTitle("Время вычисления блока");
+			_blockStartTimeModelHelper.SetTitle("Время добавления блока");
+			_totalVotes.SetTitle("Полное распределение голосов по блокам");
+			_plotTotalCumulativeVotesByTime.SetTitle("Общее число проголосовавших нарастающим итогом");
+
+			_plotModelHelperDistrict1.SetTitle("Округ 1: Распределение голосов кандидатов по блокам");
+			_plotModelHelperDistrict10.SetTitle("Округ 10: Распределение голосов кандидатов по блокам");
+			_plotModelHelperDistrict30.SetTitle("Округ 30: Распределение голосов кандидатов по блокам");
+
+			_plotTotalVotesByTimeDistrict1.SetTitle("Округ 1: Общее число проголосовавших по кандидатам нарастающим итогом");
+			_plotTotalVotesByTimeDistrict10.SetTitle("Округ 10: Общее число проголосовавших по кандидатам нарастающим итогом");
+			_plotTotalVotesByTimeDistrict30.SetTitle("Округ 30: Общее число проголосовавших по кандидатам нарастающим итогом");
+			_totalCumulativeVotes30.SetTitle("Округ 30: Общее число проголосовавших нарастающим итогом");
+
+			_statistics30PlotModelHelper.SetTitle("Данные с экранов по округу 30");
+
 			this.plotBlockTime.Model = _blockTimePlotModelHelper.PlotModel;
 			this.plotBlockStartTime.Model = _blockStartTimeModelHelper.PlotModel;
 			this.plotTotalVotes.Model = _totalVotes.PlotModel;
-			this.plotTotalVotesByTime.Model = _plotTotalVotesByTime.PlotModel;
+			this.plotTotalVotesByTime.Model = _plotTotalCumulativeVotesByTime.PlotModel;
 
 			this.plotDistrict1.Model = _plotModelHelperDistrict1.PlotModel;
 			this.plotDistrict10.Model = _plotModelHelperDistrict10.PlotModel;
@@ -53,16 +72,43 @@ namespace VoteAnalyzer
 			this.plotDistrict1Cumulative.Model = _plotTotalVotesByTimeDistrict1.PlotModel;
 			this.plotDistrict10Cumulative.Model = _plotTotalVotesByTimeDistrict10.PlotModel;
 			this.plotDistrict30Cumulative.Model = _plotTotalVotesByTimeDistrict30.PlotModel;
+
+			plotDistrict30Total.Model = _totalCumulativeVotes30.PlotModel;
+
+			statsFromPhoto30Plot.Model = _statistics30PlotModelHelper.PlotModel;
+
+			_plotModelDrawers.AddRange(
+				new IPlotModelDrawer[]
+				{
+								_blockTimePlotModelHelper,
+								_blockStartTimeModelHelper,
+								_totalVotes,
+								_plotModelHelperDistrict1,
+								_plotModelHelperDistrict10,
+								_plotModelHelperDistrict30,
+								_plotTotalCumulativeVotesByTime,
+								_totalCumulativeVotes30,
+								_plotTotalVotesByTimeDistrict1,
+								_plotTotalVotesByTimeDistrict10,
+								_plotTotalVotesByTimeDistrict30,
+								_statistics30PlotModelHelper
+				});
+
 			this.Loaded += MainWindow_Loaded;
 		}
 
 		private void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
 			UnencryptedVoteFileReader reader = new UnencryptedVoteFileReader();
-			
+
 			_votingResults = reader.ReadFromFile("ballots_decrypted_2019-09-08.csv");
 
-			
+			// установленные в процессе анализа аномальные зоны
+			_votingResults.DefineAnomalyZoneByBlocks("Зона 1А", 2046, 2525);
+			_votingResults.DefineAnomalyZoneByBlocks("Зона 1Б", 2525, 2651);
+			_votingResults.DefineAnomalyZoneByBlocks("Зона 2", 2818, 2956);
+			_votingResults.DefineAnomalyZoneByBlocks("Зона 3", 3543, 4803);
+			var statistics30 = GetStatistics();
 
 			// анализ времен вычисления блоков по блокчейну
 			_blockTimePlotModelHelper.ShowBlockTime(_votingResults);
@@ -71,8 +117,12 @@ namespace VoteAnalyzer
 			// распределение всех голосов
 			_totalVotes.Show(_votingResults);
 
-			_plotTotalVotesByTime.Show(_votingResults);
-			
+			// распределение голосов в 30-ом
+			_totalCumulativeVotes30.Show(_votingResults, x => x.DistrictNumber == 30);
+			_totalCumulativeVotes30.AddCustomData("Проголосовало по статистике", statistics30.Statistics.Select(x => new TimeGraphItem<int>(x.Time, x.Voted)));
+
+			_plotTotalCumulativeVotesByTime.Show(_votingResults, x => true);
+
 			var districts = _votingResults.Votes.Select(x => x.DistrictNumber).Distinct().ToArray();
 			// 1 район
 			_plotModelHelperDistrict1.ShowByBlockDistributionMultiAxis(_votingResults, x => x.DistrictNumber == 1);
@@ -84,10 +134,15 @@ namespace VoteAnalyzer
 			_plotModelHelperDistrict30.ShowByBlockDistributionMultiAxis(_votingResults, x => x.DistrictNumber == 30);
 			_plotTotalVotesByTimeDistrict30.ShowByCandidates(_votingResults, x => x.DistrictNumber == 30);
 
-
+			_statistics30PlotModelHelper.Show(statistics30);
 
 			// общая статистика
 			stats.SelectedObject = _votingResults.Statistics;
+
+			foreach(var drawer in _plotModelDrawers)
+			{
+				drawer.DrawAnomalyZones(_votingResults.Anomalies);
+			}
 		}
 
 		private async void ValidateSeqButtonClick(object sender, RoutedEventArgs args)
@@ -166,6 +221,60 @@ namespace VoteAnalyzer
 			}
 
 			MessageBox.Show(string.Format("Validation passed. Time - {0} (MT={1})", validator.ElapsedTime, validator.Multithreaded));
+		}
+
+
+		private static RemoteVotingStatistics GetStatistics()
+		{
+			// эта статистика получена из фотографий
+			RemoteVotingStatisticsBuilder builder = new RemoteVotingStatisticsBuilder();
+			builder
+				.AddStatisticsItem("20:00", 8581, 3077, 2525, 2376)
+				.AddStatisticsItem("19:45", 8503, 3064, 2512, 2358)
+				.AddStatisticsItem("19:30", 8394, 3035, 2495, 2325)
+				.AddStatisticsItem("19:15", 8287, 2996, 2469, 2292)
+				.AddStatisticsItem("19:00", 8199, 2973, 2451, 2275)
+				.AddStatisticsItem("18:45", 8091, 2951, 2434, 2256)
+				.AddStatisticsItem("18:30", 8005, 2932, 2418, 2235)
+				.AddStatisticsItem("18:15", 7920, 2908, 2405, 2214)
+				.AddStatisticsItem("18:00", 7839, 2885, 2386, 2184)
+				.AddStatisticsItem("17:45", 7731, 2850, 2361, 2153)
+				.AddStatisticsItem("17:30", 7622, 2817, 2340, 2127)
+				.AddStatisticsItem("17:15", 7500, 2787, 2317, 2096)
+				.AddStatisticsItem("17:00", 7388, 2755, 2293, 2069)
+				.AddStatisticsItem("16:45", 7260, 2717, 2259, 2028)
+				.AddStatisticsItem("16:30", 7161, 2683, 2230, 2000)
+				.AddStatisticsItem("16:15", 5337, 2381, 2095, 1838)
+				.AddStatisticsItem("16:00", 5337, 2262, 2095, 1838)
+				.AddStatisticsItem("15:45", 5337, 2143, 2095, 1838)
+				.AddStatisticsItem("15:30", 5337, 2024, 2095, 1838)
+				.AddStatisticsItem("15:15", 5153, 1905, 2045, 1784)
+				.AddStatisticsItem("15:01", 4464, 1786, 1992, 1731)
+				.AddStatisticsItem("14:46", 4451, 1783, 1926, 1669)
+				.AddStatisticsItem("14:31", 4451, 1783, 1846, 1582)
+				.AddStatisticsItem("14:16", 4451, 1783, 1700, 1165)
+				.AddStatisticsItem("14:01", 4451, 1783, 1548, 1138)
+				.AddStatisticsItem("13:46", 4524, 1588, 1460, 1114)
+				.AddStatisticsItem("13:31", 4436, 1495, 1393, 1085)
+				.AddStatisticsItem("13:16", 4147, 1420, 1352, 1045)
+				.AddStatisticsItem("13:00", 3866, 1321, 1295, 973)
+				.AddStatisticsItem("12:45", 3245, 1274, 1213, 868)
+				.AddStatisticsItem("12:30", 2887, 1178, 1103, 759)
+				.AddStatisticsItem("12:15", 2787, 1104, 1079, 748)
+				.AddStatisticsItem("12:00", 2787, 1104, 1079, 748)
+				.AddStatisticsItem("11:45", 2787, 1104, 1079, 748)
+				.AddStatisticsItem("11:30", 2787, 1104, 1079, 748)
+				.AddStatisticsItem("11:15", 2675, 1090, 1045, 736)
+				.AddStatisticsItem("11:00", 1898, 1007, 957, 710)
+				.AddStatisticsItem("10:45", 1898, 1007, 957, 710)
+				.AddStatisticsItem("10:30", 1898, 1007, 957, 710)
+				.AddStatisticsItem("10:15", 1898, 1007, 957, 710)
+				.AddStatisticsItem("10:00", 1898, 1007, 957, 710)
+				.AddStatisticsItem("9:45", 1825, 831, 783, 710)
+				.AddStatisticsItem("9:30", 1825, 831, 783, 710)
+				.AddStatisticsItem("8:45", 858, 428, 406, 372)
+				.AddStatisticsItem("8:30", 575, 289, 274, 236);
+			return builder.Create();
 		}
 	}
 }

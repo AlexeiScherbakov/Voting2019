@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace Voting2019.Core
 {
-	[DebuggerDisplay("{Min} - {Max}")]
+	[DebuggerDisplay("{"+nameof(Min)+"} - {"+nameof(Max)+"}")]
 	public struct MinMaxInterval<TValue>
 		where TValue : struct, IComparable<TValue>
 	{

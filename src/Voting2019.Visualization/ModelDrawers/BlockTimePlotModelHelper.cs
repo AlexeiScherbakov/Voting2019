@@ -14,13 +14,15 @@ namespace Voting2019.Visualization
 	{
 		private readonly PlotModel _plotModel;
 
+		private const string XAxisKey = "x_axis";
+
 		public BlockTimePlotModelHelper()
 		{
 			_plotModel = new PlotModel();
 			var xAxis = new LinearAxis()
 			{
 				Position = AxisPosition.Bottom,
-				Key = "x_axis"
+				Key = XAxisKey
 			};
 			_plotModel.Axes.Add(xAxis);
 
@@ -63,7 +65,7 @@ namespace Voting2019.Visualization
 		{
 			lock (_plotModel.SyncRoot)
 			{
-				var xAxis=_plotModel.Axes.Where(x => x.Key == "x_axis").Single();
+				var xAxis=_plotModel.Axes.Where(x => x.Key == XAxisKey).Single();
 				xAxis.SetMinMaxBlocksToXAxis(votingResults);
 
 				var series = PrepareSeries();
@@ -79,7 +81,7 @@ namespace Voting2019.Visualization
 		{
 			lock (_plotModel.SyncRoot)
 			{
-				var xAxis = _plotModel.Axes.Where(x => x.Key == "x_axis").Single();
+				var xAxis = _plotModel.Axes.Where(x => x.Key == XAxisKey).Single();
 				xAxis.SetMinMaxBlocksToXAxis(votingResults);
 
 				var series = PrepareSeries();
@@ -89,6 +91,16 @@ namespace Voting2019.Visualization
 				yAxis.SetAxisMax(TimeSpanAxis.ToDouble(votingResults.Votes.Select(x => x.Time).Max()));
 			}
 			_plotModel.InvalidatePlot(true);
+		}
+
+		public string GetTimeAxisKey()
+		{
+			return null;
+		}
+
+		public string GetBlockNumberAxisKey()
+		{
+			return XAxisKey;
 		}
 	}
 }

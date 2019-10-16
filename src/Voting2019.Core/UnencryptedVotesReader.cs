@@ -20,7 +20,7 @@ namespace Voting2019.Core
 			var records = _csvParser.ReadFromFile(fileName, Encoding.UTF8);
 
 
-			VotingResults ret = new VotingResults();
+			var ret = new VotingResultsBuilder();
 
 			foreach (var record in records)
 			{
@@ -38,8 +38,7 @@ namespace Voting2019.Core
 
 				ret.AddVote(result.District, result.CandidateId, result.CandidateName, vote);
 			}
-			ret.CalculateBaseStatistics();
-			return ret;
+			return ret.Create();
 		}
 
 		private sealed class UnencryptedVoteRecord

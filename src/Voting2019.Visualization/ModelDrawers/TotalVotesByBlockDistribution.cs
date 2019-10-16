@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using OxyPlot;
@@ -44,20 +46,26 @@ namespace Voting2019.Visualization
 
 		public void Show(VotingResults votingResults)
 		{
+			Show(votingResults, x => true);
+		}
+
+		public void Show(VotingResults votingResults,Func<Vote,bool> filter)
+		{
 			lock (_plotModel.SyncRoot)
 			{
 				_xAxis.SetMinMaxBlocksToXAxis(votingResults);
 
 				_plotModel.Series.Clear();
 
-				LineSeries series = new LineSeries()
+				var series = new LineSeries()
 				{
 					CanTrackerInterpolatePoints = false
 				};
 
 				_plotModel.Series.Add(series);
-				
+
 				var points = votingResults.Votes
+					.Where(x => filter(x))
 					.GroupBy(x => x.BlockNumber, (key, votes) => (blockNumber: key, votesCount: votes.Count()))
 					.OrderBy(x => x.blockNumber)
 					.ToArray();
@@ -82,6 +90,43 @@ namespace Voting2019.Visualization
 				_yAxis.SetAxisMax(maxVotes);
 			}
 			_plotModel.InvalidatePlot(true);
+		}
+
+		public void AddTimeSeries(string tag,IEnumerable<BlockGraphItem<int>> points)
+		{
+			lock (_plotModel.SyncRoot)
+			{
+				var series = (LineSeries) _plotModel.Series.Where(x => ((string) x.Tag) == tag).SingleOrDefault();
+				if (series == null)
+				{
+					series = new LineSeries()
+					{
+						CanTrackerInterpolatePoints = false,
+						Tag = tag
+					};
+					_plotModel.Series.Add(series);
+				}
+				else
+				{
+					series.Points.Clear();
+				}
+				foreach(var point in points)
+				{
+					series.Points.Add(new DataPoint(point.BlockNumber, point.Data));
+				}
+			}
+
+			_plotModel.InvalidatePlot(true);
+		}
+
+		public string GetTimeAxisKey()
+		{
+			return null;
+		}
+
+		public string GetBlockNumberAxisKey()
+		{
+			 return "x_axis";
 		}
 	}
 }

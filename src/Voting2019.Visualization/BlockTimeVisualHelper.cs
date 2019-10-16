@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using OxyPlot;
@@ -11,56 +12,24 @@ namespace Voting2019.Visualization
 {
 	internal static class BlockTimeVisualHelper
 	{
-		private sealed class BlockStartTime
-			: IEquatable<BlockStartTime>
+		public static TimeSpan LoadBlockTimesToSeries(VotingResults votingResults, LineSeries averageBlockTimeSeries, LineSeries blockStartTimeSeries)
 		{
-			public readonly int BlockNumber;
-			public readonly TimeSpan Time;
-
-			public BlockStartTime(int number, TimeSpan time)
-			{
-				BlockNumber = number;
-				Time = time;
-			}
-
-			public bool Equals(BlockStartTime other)
-			{
-				return (BlockNumber == other.BlockNumber) && (Time == other.Time);
-			}
-
-			public override bool Equals(object obj)
-			{
-				if (obj is BlockStartTime bst)
-				{
-					return Equals(bst);
-				}
-				return false;
-			}
-
-			public override int GetHashCode()
-			{
-				return HashCode.Combine(BlockNumber, Time);
-			}
-		}
-
-		public static TimeSpan LoadBlockTimesToSeries(VotingResults votingResults,LineSeries averageBlockTimeSeries,LineSeries blockStartTimeSeries)
-		{
-			var blocks = votingResults.Votes.Select(x => new BlockStartTime(x.BlockNumber, x.Time))
+			var blocks = votingResults.Votes.Select(x => new BlockGraphItem<TimeSpan>(x.BlockNumber, x.Time))
 				.Distinct()
 				.OrderBy(x => x.BlockNumber)
 				.ToArray();
 
 
-			TimeSpan lastBlockStartTime = blocks[0].Time;
+			TimeSpan lastBlockStartTime = blocks[0].Data;
 			int lastBlockNumber = blocks[0].BlockNumber;
 			TimeSpan maxBlockTime = TimeSpan.Zero;
 
 			for (int i = 1; i < blocks.Length; i++)
 			{
-				ref BlockStartTime currentBlock = ref blocks[i];
+				ref BlockGraphItem<TimeSpan> currentBlock = ref blocks[i];
 
 
-				var blocksTime = currentBlock.Time - lastBlockStartTime;
+				var blocksTime = currentBlock.Data - lastBlockStartTime;
 				var numberOfBlocks = currentBlock.BlockNumber - lastBlockNumber;
 
 				var averageBlockTime = blocksTime / numberOfBlocks;
@@ -68,12 +37,12 @@ namespace Voting2019.Visualization
 				for (int point = lastBlockNumber; point < currentBlock.BlockNumber; point++)
 				{
 					if (blockStartTimeSeries != null)
-						blockStartTimeSeries.Points.Add(new DataPoint(point, TimeSpanAxis.ToDouble(currentBlock.Time)));
+						blockStartTimeSeries.Points.Add(new DataPoint(point, TimeSpanAxis.ToDouble(currentBlock.Data)));
 					if (averageBlockTimeSeries != null)
 						averageBlockTimeSeries.Points.Add(new DataPoint(point, TimeSpanAxis.ToDouble(averageBlockTime)));
 				}
 
-				lastBlockStartTime = currentBlock.Time;
+				lastBlockStartTime = currentBlock.Data;
 				lastBlockNumber = currentBlock.BlockNumber;
 
 				if (averageBlockTime > maxBlockTime)

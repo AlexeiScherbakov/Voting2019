@@ -8,6 +8,11 @@
 		mc:Ignorable="d"
         Title="Moscow Voting 2019" Height="600" Width="1000">
 	<DockPanel>
+		<Menu IsMainMenu="True" DockPanel.Dock="Top">
+			<MenuItem Header="Display">
+				<MenuItem IsCheckable="True" Header="Show anomaly zones"/>
+			</MenuItem>
+		</Menu>
 		<TextBlock DockPanel.Dock="Bottom" x:Name="txtFooter"/>
 		<TabControl TabStripPlacement="Left">
 			<TabItem Header="Stats">
@@ -45,6 +50,9 @@
 			<TabItem Header="District 30 cumulative/time">
 				<oxy:PlotView x:Name="plotDistrict30Cumulative"/>
 			</TabItem>
+			<TabItem Header="District 30 total cumulative/time">
+				<oxy:PlotView x:Name="plotDistrict30Total"/>
+			</TabItem>
 			<TabItem Header="Datasets validator">
 				<xctk:BusyIndicator x:Name="busy">
 					<DockPanel>
@@ -53,6 +61,9 @@
 						<Grid/>
 					</DockPanel>
 				</xctk:BusyIndicator>
+			</TabItem>
+			<TabItem Header="District 30: Statistics from photos">
+				<oxy:PlotView x:Name="statsFromPhoto30Plot"/>
 			</TabItem>
 		</TabControl>
 

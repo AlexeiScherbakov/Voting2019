@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -11,7 +12,7 @@ namespace Voting2019.Visualization
 		: IPlotModelDrawer
 	{
 		private readonly PlotModel _plotModel;
-		private readonly LinearAxis _xAxis;
+		private readonly TimeSpanAxis _xAxis;
 		private readonly LinearAxis _yAxis;
 
 		public TotalCumulativeVotedByTime()
@@ -37,7 +38,7 @@ namespace Voting2019.Visualization
 			get { return _plotModel; }
 		}
 
-		public void Show(VotingResults votingResults)
+		public void Show(VotingResults votingResults, Func<Vote, bool> filter)
 		{
 			lock (_plotModel.SyncRoot)
 			{
@@ -45,8 +46,30 @@ namespace Voting2019.Visualization
 
 				_plotModel.Series.Clear();
 
-				LineSeries series = TotalCumulativeVotedByTimeHelper.CreateSeries(votingResults, x => true, out var max);
+				LineSeries series = TotalCumulativeVotedByTimeUtils.CreateSeries(votingResults, filter, out var max);
+				series.Title = "Всего проголосовало";
 				_yAxis.SetAxisMax(max);
+				_plotModel.Series.Add(series);
+			}
+			_plotModel.InvalidatePlot(true);
+		}
+
+		public void AddCustomData(string title, IEnumerable<TimeGraphItem<int>> data)
+		{
+			
+			lock (_plotModel.SyncRoot)
+			{
+				LineSeries series = new LineSeries()
+				{
+					CanTrackerInterpolatePoints = false,
+					Title = title
+				};
+
+				foreach(var item in data)
+				{
+					series.Points.Add(new DataPoint(TimeSpanAxis.ToDouble(item.Time), item.Data));
+				}
+
 				_plotModel.Series.Add(series);
 			}
 			_plotModel.InvalidatePlot(true);
@@ -65,7 +88,7 @@ namespace Voting2019.Visualization
 				int max=0;
 				foreach(var candidate in candidates)
 				{
-					LineSeries series = TotalCumulativeVotedByTimeHelper.CreateSeries(votingResults, x => filter(x) && (x.CandidateId == candidate), out int total);
+					LineSeries series = TotalCumulativeVotedByTimeUtils.CreateSeries(votingResults, x => filter(x) && (x.CandidateId == candidate), out int total);
 					if (total > max)
 					{
 						max = total;
@@ -76,6 +99,16 @@ namespace Voting2019.Visualization
 				_yAxis.SetAxisMax(max);
 			}
 			_plotModel.InvalidatePlot(true);
+		}
+
+		public string GetTimeAxisKey()
+		{
+			return "x_axis";
+		}
+
+		public string GetBlockNumberAxisKey()
+		{
+			return null;
 		}
 	}
 }
