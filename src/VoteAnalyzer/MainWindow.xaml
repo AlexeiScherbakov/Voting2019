@@ -21,7 +21,7 @@
 			<TabItem Header="Block average calculation time">
 				<oxy:PlotView x:Name="plotBlockTime"/>
 			</TabItem>
-			<TabItem Header="Block Time / time">
+			<TabItem Header="Block timestamp / time">
 				<oxy:PlotView x:Name="plotBlockStartTime"/>
 			</TabItem>
 			<TabItem Header="Votes distribution/block">
@@ -61,6 +61,9 @@
 						<Grid/>
 					</DockPanel>
 				</xctk:BusyIndicator>
+			</TabItem>
+			<TabItem Header="District 30: Statistics data">
+				<DataGrid x:Name="dist30stats"/>
 			</TabItem>
 			<TabItem Header="District 30: Statistics from photos">
 				<oxy:PlotView x:Name="statsFromPhoto30Plot"/>

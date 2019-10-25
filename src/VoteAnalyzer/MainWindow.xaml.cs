@@ -110,6 +110,8 @@ namespace VoteAnalyzer
 			_votingResults.DefineAnomalyZoneByBlocks("Зона 3", 3543, 4803);
 			var statistics30 = GetStatistics();
 
+			dist30stats.ItemsSource = statistics30.Statistics;
+
 			// анализ времен вычисления блоков по блокчейну
 			_blockTimePlotModelHelper.ShowBlockTime(_votingResults);
 			_blockStartTimeModelHelper.ShowBlockStartTime(_votingResults);
