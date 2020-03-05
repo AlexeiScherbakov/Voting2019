@@ -12,9 +12,10 @@
 			<MenuItem Header="Display">
 				<MenuItem IsCheckable="True" Header="Show anomaly zones"/>
 			</MenuItem>
+			<MenuItem Header="Export Graph" Click="ExportGraphClick"/>
 		</Menu>
 		<TextBlock DockPanel.Dock="Bottom" x:Name="txtFooter"/>
-		<TabControl TabStripPlacement="Left">
+		<TabControl x:Name="tabs" TabStripPlacement="Left">
 			<TabItem Header="Stats">
 				<xctk:PropertyGrid x:Name="stats" IsReadOnly="True"/>
 			</TabItem>

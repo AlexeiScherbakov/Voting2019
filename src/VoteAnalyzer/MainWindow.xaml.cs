@@ -10,6 +10,9 @@ using Voting2019.Visualization;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Collections.Generic;
+using OxyPlot.Wpf;
+using Microsoft.Win32;
+using OxyPlot;
 
 namespace VoteAnalyzer
 {
@@ -164,6 +167,25 @@ namespace VoteAnalyzer
 
 			busy.IsBusy = false;
 		}
+
+		private void ExportGraphClick(object sender, RoutedEventArgs e)
+		{
+			var content = tabs.SelectedContent;
+			if (!(content is OxyPlot.Wpf.PlotView plotView))
+			{
+				return;
+			}
+
+			var s = new SaveFileDialog();
+			s.Filter = "*.png|*.png";
+			if (s.ShowDialog() != true)
+			{
+				return;
+			}
+
+			PngExporter.Export(plotView.Model, s.FileName,1920, 1080, OxyColors.White);
+		}
+
 		private async void ValidateParallelButtonClick(object sender, RoutedEventArgs args)
 		{
 			busy.IsBusy = true;
